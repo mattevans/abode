@@ -55,7 +55,7 @@ func Explode(address string) (*Address, error) {
 	// Execute the request.
 	resp, err := client.Geocode(context.Background(), req)
 	if len(resp) < 1 {
-		return nil, errors.New("Zero results for given address")
+		return nil, err
 	}
 	if err != nil {
 		return nil, err
