@@ -43,4 +43,13 @@ abode.Address{
 }
 ```
 
+Configuration
+-------------
+
+Each `abode.Address{}` component can be tailored to meet your needs. Simply adjust the mapping of the Google Maps Address Components [here](https://github.com/mattevans/abode/blob/master/component.go#L31).
+
+
+Disclaimer
+-------------
+
 Ensure your end results are used in conjunction with a Google Map to avoid violating the [Google Maps API Terms of Service](https://developers.google.com/maps/documentation/geocoding/policies).
