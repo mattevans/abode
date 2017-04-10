@@ -42,3 +42,5 @@ abode.Address{
   FormattedAddress: "193 Rogers Ave, Brooklyn, NY 11216, USA",
 }
 ```
+
+Ensure your end results are used in conjunction with a Google Map to avoid violating the [Google Maps API Terms of Service](https://developers.google.com/maps/documentation/geocoding/policies).
