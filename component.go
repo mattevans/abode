@@ -49,6 +49,11 @@ var addressCountryComposition = []string{
 	AddressComponentTypeCountry,
 }
 
+// Defines the address components that make up Address.CountryCode.
+var addressCountryCodeComposition = []string{
+	AddressComponentTypeCountry,
+}
+
 // Defines the address components that make up Address.Zip.
 var addressPostalCodeComposition = []string{
 	AddressComponentTypePostalCode,

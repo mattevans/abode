@@ -16,15 +16,16 @@ var addressLineDelimeter = ","
 
 // Address represents a response Address from abode.
 type Address struct {
-	AddressLine1     *string  `json:"address_line1"`
-	AddressLine2     *string  `json:"address_line2"`
-	AddressCity      *string  `json:"address_city"`
-	AddressState     *string  `json:"address_state"`
-	AddressCountry   *string  `json:"address_country"`
-	AddressZip       *string  `json:"address_zip"`
-	AddressLat       *float64 `json:"address_lat"`
-	AddressLng       *float64 `json:"address_lng"`
-	FormattedAddress *string  `json:"formatted_address"`
+	AddressLine1       *string  `json:"address_line1"`
+	AddressLine2       *string  `json:"address_line2"`
+	AddressCity        *string  `json:"address_city"`
+	AddressState       *string  `json:"address_state"`
+	AddressCountry     *string  `json:"address_country"`
+	AddressCountryCode *string  `json:"address_country_code"`
+	AddressZip         *string  `json:"address_zip"`
+	AddressLat         *float64 `json:"address_lat"`
+	AddressLng         *float64 `json:"address_lng"`
+	FormattedAddress   *string  `json:"formatted_address"`
 }
 
 // initClient will initalize a Google Maps API client.
@@ -69,26 +70,33 @@ func Explode(address string) (*Address, error) {
 
 	// Construct the return *Address{}
 	response := &Address{
-		AddressLine1:     compose(addressLine1Composition, "", components),
-		AddressLine2:     compose(addressLine2Composition, addressLineDelimeter, components),
-		AddressCity:      compose(addressCityComposition, addressLineDelimeter, components),
-		AddressState:     compose(addressStateComposition, addressLineDelimeter, components),
-		AddressCountry:   compose(addressCountryComposition, addressLineDelimeter, components),
-		AddressZip:       compose(addressPostalCodeComposition, addressLineDelimeter, components),
-		AddressLat:       &lat,
-		AddressLng:       &lng,
-		FormattedAddress: &formattedAddress,
+		AddressLine1:       compose(addressLine1Composition, "", components, false),
+		AddressLine2:       compose(addressLine2Composition, addressLineDelimeter, components, false),
+		AddressCity:        compose(addressCityComposition, addressLineDelimeter, components, false),
+		AddressState:       compose(addressStateComposition, addressLineDelimeter, components, false),
+		AddressCountry:     compose(addressCountryComposition, addressLineDelimeter, components, false),
+		AddressCountryCode: compose(addressCountryCodeComposition, addressLineDelimeter, components, true),
+		AddressZip:         compose(addressPostalCodeComposition, addressLineDelimeter, components, false),
+		AddressLat:         &lat,
+		AddressLng:         &lng,
+		FormattedAddress:   &formattedAddress,
 	}
 
 	return response, err
 }
 
-func compose(composition []string, delimeter string, components []maps.AddressComponent) *string {
+func compose(composition []string, delimeter string, components []maps.AddressComponent, useShortName bool) *string {
 	var str string
 	for _, element := range composition {
 		component := getComponentByType(components, element)
-		if component != nil && !strings.Contains(str, component.LongName) {
-			str = fmt.Sprintf("%s %s%s", str, component.LongName, delimeter)
+		if useShortName {
+			if component != nil && !strings.Contains(str, component.ShortName) {
+				str = fmt.Sprintf("%s %s%s", str, component.ShortName, delimeter)
+			}
+		} else {
+			if component != nil && !strings.Contains(str, component.LongName) {
+				str = fmt.Sprintf("%s %s%s", str, component.LongName, delimeter)
+			}
 		}
 	}
 	if str == "" {
