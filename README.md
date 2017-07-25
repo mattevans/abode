@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/mattevans/abode?status.svg)](https://godoc.org/github.com/mattevans/abode)
 [![Build Status](https://travis-ci.org/mattevans/abode.svg?branch=master)](https://travis-ci.org/mattevans/abode)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mattevans/abode)](https://goreportcard.com/report/github.com/mattevans/abode)
 
 Explode one-line address strings using Golang. 
 
