@@ -7,7 +7,11 @@
 
 Explode one-line address strings using Golang. 
 
-This package uses the [Google Maps API](https://console.developers.google.com/apis/credentials) to geocode the address. Don't forget to set your `GOOGLE_MAPS_API_KEY` environment variable.
+This package uses the [Google Maps API](https://console.developers.google.com/apis/credentials) to geocode the address.
+Specifically you will require the [Geocoding API](https://console.developers.google.com/apis/library/geocoding-backend.googleapis.com)
+enabled to translate address strings to detailed address objects.
+
+Don't forget to set your `GOOGLE_MAPS_API_KEY` environment variable.
 
 Installation
 -----------------
