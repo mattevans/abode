@@ -72,8 +72,8 @@ func TestExplodeInternationalAddress(t *testing.T) {
 	country := "New Zealand"
 	countryCode := "NZ"
 	zip := "2014"
-	lat := -36.8991018
-	lng := 174.9338525
+	lat := -36.8990751
+	lng := 174.9334851
 	formatted := "1/4 Abercrombie Street, Howick, Auckland 2014, New Zealand"
 
 	expected := &Address{
