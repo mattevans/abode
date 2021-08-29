@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
-
-	"github.com/snikch/api/config"
 
 	"googlemaps.github.io/maps"
 )
 
 var client *maps.Client
-var addressLineDelimeter = ","
+var addressLineDelimiter = ","
 
 // Address represents a response Address from abode.
 type Address struct {
@@ -31,9 +30,9 @@ type Address struct {
 // initClient will initalize a Google Maps API client.
 func initClient() error {
 	var err error
-	key := config.PrivateString("GOOGLE_MAPS_API_KEY")
+	key := os.Getenv("GOOGLE_MAPS_API_KEY")
 	if key == "" {
-		return errors.New("Please configure a `GOOGLE_MAPS_API_KEY`")
+		return errors.New("please configure a `GOOGLE_MAPS_API_KEY`")
 	}
 	client, err = maps.NewClient(maps.WithAPIKey(key))
 	return err
@@ -42,8 +41,7 @@ func initClient() error {
 // Explode takes a one-line address string, explodes it and returns an *Address
 func Explode(address string) (*Address, error) {
 	if client == nil {
-		err := initClient()
-		if err != nil {
+		if err := initClient(); err != nil {
 			return nil, err
 		}
 	}
@@ -62,7 +60,7 @@ func Explode(address string) (*Address, error) {
 		return nil, err
 	}
 
-	// Using the first/closest match in our response, grab the values we need.
+	// Using the first match in our response, grab the values we need.
 	components := resp[0].AddressComponents
 	formattedAddress := resp[0].FormattedAddress
 	lat := resp[0].Geometry.Location.Lat
@@ -71,12 +69,12 @@ func Explode(address string) (*Address, error) {
 	// Construct the return *Address{}
 	response := &Address{
 		AddressLine1:       compose(addressLine1Composition, "", components, false),
-		AddressLine2:       compose(addressLine2Composition, addressLineDelimeter, components, false),
-		AddressCity:        compose(addressCityComposition, addressLineDelimeter, components, false),
-		AddressState:       compose(addressStateComposition, addressLineDelimeter, components, false),
-		AddressCountry:     compose(addressCountryComposition, addressLineDelimeter, components, false),
-		AddressCountryCode: compose(addressCountryCodeComposition, addressLineDelimeter, components, true),
-		AddressZip:         compose(addressPostalCodeComposition, addressLineDelimeter, components, false),
+		AddressLine2:       compose(addressLine2Composition, addressLineDelimiter, components, false),
+		AddressCity:        compose(addressCityComposition, addressLineDelimiter, components, false),
+		AddressState:       compose(addressStateComposition, addressLineDelimiter, components, false),
+		AddressCountry:     compose(addressCountryComposition, addressLineDelimiter, components, false),
+		AddressCountryCode: compose(addressCountryCodeComposition, addressLineDelimiter, components, true),
+		AddressZip:         compose(addressPostalCodeComposition, addressLineDelimiter, components, false),
 		AddressLat:         &lat,
 		AddressLng:         &lng,
 		FormattedAddress:   &formattedAddress,
@@ -85,23 +83,23 @@ func Explode(address string) (*Address, error) {
 	return response, err
 }
 
-func compose(composition []string, delimeter string, components []maps.AddressComponent, useShortName bool) *string {
+func compose(composition []string, delimiter string, components []maps.AddressComponent, useShortName bool) *string {
 	var str string
 	for _, element := range composition {
 		component := getComponentByType(components, element)
 		if useShortName {
 			if component != nil && !strings.Contains(str, component.ShortName) {
-				str = fmt.Sprintf("%s %s%s", str, component.ShortName, delimeter)
+				str = fmt.Sprintf("%s %s%s", str, component.ShortName, delimiter)
 			}
 		} else {
 			if component != nil && !strings.Contains(str, component.LongName) {
-				str = fmt.Sprintf("%s %s%s", str, component.LongName, delimeter)
+				str = fmt.Sprintf("%s %s%s", str, component.LongName, delimiter)
 			}
 		}
 	}
 	if str == "" {
 		return nil
 	}
-	str = strings.TrimPrefix(strings.TrimSuffix(str, delimeter), " ")
+	str = strings.TrimPrefix(strings.TrimSuffix(str, delimiter), " ")
 	return &str
 }
