@@ -5,13 +5,11 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mattevans/abode)](https://goreportcard.com/report/github.com/mattevans/abode)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mattevans/abode/blob/master/LICENSE)
 
-Explode one-line address strings using Golang. 
-
-This package uses the [Google Maps API](https://console.developers.google.com/apis/credentials) to geocode the address.
-Specifically you will require the [Geocoding API](https://console.developers.google.com/apis/library/geocoding-backend.googleapis.com)
-enabled to translate address strings to detailed address objects.
-
-Don't forget to set your `GOOGLE_MAPS_API_KEY` environment variable.
+- Geocode one-line addresses.
+- Determine timezone information for a given address.
+- This package uses the [Google Maps Web Services](https://developers.google.com/maps/web-services) to geocode the address.
+- You will require the [Geocoding API](https://developers.google.com/maps/documentation) enabled, and optionally the [Timezone API] if you wish to also use `Timezone()`.
+- Remember to set your `GOOGLE_MAPS_API_KEY` environment variable.
 
 Installation
 -----------------
@@ -21,39 +19,54 @@ Installation
 Example
 -------------
 
-Explode your one-line address...
+### Geocode an address:
 
 ```go
-yourAddress := "193 Rogers Ave, Brooklyn, New York"
+addr := "193 Rogers Ave, Brooklyn, New York"
 
-// Explode our one-line address into components.
-address, err := abode.Explode(yourAddress)
+address, err := abode.ExplodeWithContext(ctx, addr)
 if err != nil {
   return err
 }
 ```
 
-Which will give you...
+Returns...
 
 ```go
 abode.Address{
-  AddressLine1:     "193 Rogers Avenue",
-  AddressLine2:     "Brooklyn"
-  AddressCity:      nil,
-  AddressState:     "New York"
-  AddressCountry:   "United States"
-  AddressZip:       "11216"
-  AddressLat:       40.6706073,
-  AddressLng:       -73.9530182,
-  FormattedAddress: "193 Rogers Ave, Brooklyn, NY 11216, USA",
+    AddressLine1:     "193 Rogers Avenue",
+    AddressLine2:     "Brooklyn"
+    AddressCity:      nil,
+    AddressState:     "New York"
+    AddressCountry:   "United States"
+    AddressZip:       "11216"
+    AddressLat:       40.6706073,
+    AddressLng:       -73.9530182,
+    FormattedAddress: "193 Rogers Ave, Brooklyn, NY 11216, USA",
 }
 ```
 
-Configuration
--------------
+### Timezone information for an address:
 
-Each `abode.Address{}` component can be tailored to meet your needs. Simply adjust the mapping of the Google Maps Address Components [here](https://github.com/mattevans/abode/blob/master/component.go#L31).
+```go
+addr := "193 Rogers Ave, Brooklyn, New York"
 
+address, err := abode.Timezone(ctx, addr)
+if err != nil {
+  return err
+}
+```
+
+Returns...
+
+```go
+abode.Location{
+    DstOffset:     0,
+    RawOffset:     -17762,
+    TimeZoneId:    "GMT-04:56:02",
+    TimeZoneName:  "America/New_York"
+}
+```
 
 Disclaimer
 -------------
